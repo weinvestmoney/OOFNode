@@ -1,0 +1,24 @@
+{
+  "name": "oofnode",
+  "version": "1.0.0",
+  "description": "OOF Node Package",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ConjureFi/OOFNode.git"
+  },
+  "author": "Conjure Finance",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ConjureFi/OOFNode/issues"
+  },
+  "homepage": "https://github.com/ConjureFi/OOFNode#readme",
+  "dependencies": {
+    "google-spreadsheet": "^3.1.15",
+    "googleapis": "^39.2.0",
+    "node-fetch": "^2.6.1"
+  }
+}
