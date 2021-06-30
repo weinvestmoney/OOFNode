@@ -1,5 +1,18 @@
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 const fetch = require("node-fetch");
+const ethers = require('ethers');
+require('dotenv').config()
+
+// config go to file later
+const rpc = process.env.RPC
+const pk= process.env.PK
+
+let wallet = new ethers.Wallet(pk);
+const provider = new ethers.providers.JsonRpcProvider(rpc);
+
+let walletWithProvider = new ethers.Wallet(pk, provider);
+
+console.log(walletWithProvider.address)
 
 async function test() {
 
