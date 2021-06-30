@@ -19,12 +19,27 @@ async function test() {
         let endpoint = rows[i]["_rawData"][2]
         let freq = rows[i]["_rawData"][3]
         let decimals = rows[i]["_rawData"][4]
+        let parser = rows[i]["_rawData"][5]
+        let parsingargs = []
+
+        try {
+            parsingargs = parser.split(",");
+        } catch {}
 
         try {
             console.log(endpoint)
             const res = await fetch(endpoint);
             const body = await res.json();
-            console.log(body);
+
+            let j;
+            let toParse = body;
+            for (j=0; j < parsingargs.length; j++) {
+                toParse = toParse[parsingargs[j]]
+            }
+            console.log(toParse)
+            toParse = toParse * (10 ** decimals)
+            console.log(toParse)
+
         } catch {}
 
     }
