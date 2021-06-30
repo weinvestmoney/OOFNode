@@ -1,18 +1,25 @@
+
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 const fetch = require("node-fetch");
 const ethers = require('ethers');
+const isAddress = require("ethers");
 require('dotenv').config()
+const ABI = require('./abi/oof.json')
+const {Contract} = require("ethers");
 
 // config go to file later
 const rpc = process.env.RPC
 const pk= process.env.PK
+const oofAddress= process.env.OOFAddress
 
-let wallet = new ethers.Wallet(pk);
 const provider = new ethers.providers.JsonRpcProvider(rpc);
+const walletWithProvider = new ethers.Wallet(pk, provider);
 
-let walletWithProvider = new ethers.Wallet(pk, provider);
+const oofContract =  !!ABI && !!walletWithProvider
+        ? new Contract(oofAddress, ABI, walletWithProvider)
+        : undefined;
 
-console.log(walletWithProvider.address)
+console.log(oofContract.functions)
 
 async function test() {
 
