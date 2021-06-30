@@ -37,8 +37,8 @@ async function test() {
                 toParse = toParse[parsingargs[j]]
             }
             console.log(toParse)
-            toParse = toParse * (10 ** decimals)
-            console.log(toParse)
+            toParse = parseFloat(toParse) * (10 ** decimals)
+            console.log(Math.round(toParse))
 
         } catch {}
 
