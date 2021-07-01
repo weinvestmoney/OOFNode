@@ -9,8 +9,8 @@ const {Contract} = require("ethers");
 const rpc = process.env.RPC
 const pk= process.env.PK
 const oofAddress= process.env.OOFAddress
-const sheetapi= process.env.SpreadsheetAPIKey
-const sheetid= process.env.SpreadsheetID
+const sheetapi= process.env.SHEETAPI
+const sheetid= process.env.SHEETID
 
 const provider = new ethers.providers.JsonRpcProvider(rpc);
 const walletWithProvider = new ethers.Wallet(pk, provider);
