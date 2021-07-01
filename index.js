@@ -1,8 +1,6 @@
-
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 const fetch = require("node-fetch");
 const ethers = require('ethers');
-const isAddress = require("ethers");
 require('dotenv').config()
 const ABI = require('./abi/oof.json')
 const {Contract} = require("ethers");
@@ -64,6 +62,7 @@ async function startNode() {
     }
 
     // group together by same update frequency
+    /**
     let group = feedInventory.reduce((r, a) => {
             r[a.frequency] = [...r[a.frequency] || [], a];
             return r;
@@ -71,15 +70,11 @@ async function startNode() {
 
     let keys = Object.keys(group);
     console.log(keys)
+     */
 
-    let x;
-    for(x = 0; x < keys.length; x++) {
-        if (keys[x] === "undefined") continue;
-
-        console.log(group[keys[x]])
-
-        setInterval(processFeeds, parseInt(keys[x]), group[keys[x]]);
-    }
+    // process first time then every hour
+    await processFeeds(feedInventory)
+    setInterval(processFeeds, 3600 * 1000, feedInventory);
 }
 
 async function processFeeds(feedInput) {
@@ -107,19 +102,21 @@ async function processFeeds(feedInput) {
             feedIdArray.push(feedInput[i]["feedId"])
             feedValueArray.push(Math.round(toParse))
 
-            //start web 3 call
-            await oofContract.submitFeed(feedIdArray,feedValueArray)
-
-
-
         } catch(e) {
             console.log(e)
         }
     }
 
-
+    //start web 3 call
+    console.log(feedIdArray)
+    console.log(feedValueArray)
+    try {
+        await oofContract.submitFeed(feedIdArray,feedValueArray)
+    } catch (e) {
+        console.log(e)
+    }
 }
 
-
+// starts the node script
 startNode()
 
