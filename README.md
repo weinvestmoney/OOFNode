@@ -3,7 +3,8 @@
 
 ## Installation
 Simply clone into this repo
-git clone https://github.com/ConjureFi/OOFNode
+
+`git clone https://github.com/ConjureFi/OOFNode`
 
 Then create a .env with the following parameters
 
