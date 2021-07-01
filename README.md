@@ -8,18 +8,15 @@ git clone https://github.com/ConjureFi/OOFNode
 Then create a .env with the following parameters
 
 `PK=PRIVATEKEY
-
 RPC=RPCURLWITHAPIKEY
-
 OOFAddress=OOFCONTRACTADDRESS
-
 SpreadsheetID=1syqS8Gpl7ZS9UC_Wr6giY057XebJu3bZKXhIDsN
-
 SpreadsheetAPIKey=KEY`
 
 Then cd into the dir and run
 
 `node OOFNode.js`
+
 and the node will automatically start submitting feeds every hour from the provided private key to the provided OOF address.
 
 Disclaimer
