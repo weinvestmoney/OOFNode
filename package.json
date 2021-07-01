@@ -2,7 +2,7 @@
   "name": "oofnode",
   "version": "1.0.0",
   "description": "OOF Node Package",
-  "main": "index.js",
+  "main": "OOFNode.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

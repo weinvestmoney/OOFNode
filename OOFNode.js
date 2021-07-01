@@ -9,6 +9,8 @@ const {Contract} = require("ethers");
 const rpc = process.env.RPC
 const pk= process.env.PK
 const oofAddress= process.env.OOFAddress
+const sheetapi= process.env.SHEETAPI
+const sheetid= process.env.SHEETID
 
 const provider = new ethers.providers.JsonRpcProvider(rpc);
 const walletWithProvider = new ethers.Wallet(pk, provider);
@@ -23,8 +25,8 @@ let feedInventory = [];
 // start building inventory
 async function startNode() {
     // Initialize the sheet
-    const doc = new GoogleSpreadsheet('1syqS8Gpl7ZS9UC_Wr6giY057XebJu3bZKXhIDsN-DJ0');
-    await doc.useApiKey("AIzaSyCWfTF6dkEhBTK_4ypPeV5kGz2F8L73RXE");
+    const doc = new GoogleSpreadsheet(sheetid);
+    await doc.useApiKey(sheetapi);
 
     await doc.loadInfo(); // loads document properties and worksheets
     const sheet = doc.sheetsByIndex[0];
@@ -63,17 +65,6 @@ async function startNode() {
         feedInventory.push(tempInv)
     }
 
-    // group together by same update frequency
-    /**
-    let group = feedInventory.reduce((r, a) => {
-            r[a.frequency] = [...r[a.frequency] || [], a];
-            return r;
-            }, {});
-
-    let keys = Object.keys(group);
-    console.log(keys)
-     */
-
     // process first time then every hour
     await processFeeds(feedInventory)
     setInterval(processFeeds, 3600 * 1000, feedInventory);
@@ -85,6 +76,8 @@ async function processFeeds(feedInput) {
     let feedValueArray = []
 
     let i;
+    console.log("checking feed APIs")
+
     for (i=0; i < feedInput.length;i++) {
         try {
             console.log(feedInput[i]["endpoint"])
@@ -96,7 +89,6 @@ async function processFeeds(feedInput) {
             for (j=0; j < feedInput[i]["parsingargs"].length; j++) {
                 toParse = toParse[feedInput[i]["parsingargs"][j]]
             }
-            console.log(toParse)
             toParse = parseFloat(toParse) * (10 ** feedInput[i]["decimals"])
             console.log(Math.round(toParse))
 
@@ -110,10 +102,10 @@ async function processFeeds(feedInput) {
     }
 
     //start web 3 call
-    console.log(feedIdArray)
-    console.log(feedValueArray)
+    console.log('submitting feeds...')
     try {
         await oofContract.submitFeed(feedIdArray,feedValueArray)
+        console.log("submitted feed ids: " + feedIdArray + "with values: " + feedValueArray + " at " + Date.now())
     } catch (e) {
         console.log(e)
     }
@@ -122,8 +114,8 @@ async function processFeeds(feedInput) {
 // start building inventory
 async function setupFeeds() {
     // Initialize the sheet
-    const doc = new GoogleSpreadsheet('1syqS8Gpl7ZS9UC_Wr6giY057XebJu3bZKXhIDsN-DJ0');
-    await doc.useApiKey("AIzaSyCWfTF6dkEhBTK_4ypPeV5kGz2F8L73RXE");
+    const doc = new GoogleSpreadsheet(sheetapi);
+    await doc.useApiKey(sheetid);
 
     await doc.loadInfo(); // loads document properties and worksheets
     const sheet = doc.sheetsByIndex[0];
@@ -177,11 +169,11 @@ async function setupFeeds() {
         revenueModes.push(0)
     }
 
-    console.log("ok")
-    console.log(decimals)
+    console.log("creating feeds...")
 
         try {
         await oofContract.createNewFeeds(names,descriptions,decimals,timeslots,feedCosts,revenueModes)
+            console.log("feeds created")
     } catch (e) {
         console.log(e)
     }
