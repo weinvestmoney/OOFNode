@@ -43,6 +43,8 @@ async function startNode() {
 
         if (feedname === "Oracle Address" ) continue;
         if (feedname === "Feed Name") continue;
+        if (feedname === "CCMCAP/USD") continue;
+        if (feedname === "TVLDEFI/USD") continue;
 
         try {
             parsingargs = parser.split(",");
@@ -100,7 +102,7 @@ async function processFeeds(feedInput) {
 
             // push values
             feedIdArray.push(feedInput[i]["feedId"])
-            feedValueArray.push(Math.round(toParse))
+            feedValueArray.push(Math.round(toParse).toString())
 
         } catch(e) {
             console.log(e)
