@@ -119,6 +119,75 @@ async function processFeeds(feedInput) {
     }
 }
 
+// start building inventory
+async function setupFeeds() {
+    // Initialize the sheet
+    const doc = new GoogleSpreadsheet('1syqS8Gpl7ZS9UC_Wr6giY057XebJu3bZKXhIDsN-DJ0');
+    await doc.useApiKey("AIzaSyCWfTF6dkEhBTK_4ypPeV5kGz2F8L73RXE");
+
+    await doc.loadInfo(); // loads document properties and worksheets
+    const sheet = doc.sheetsByIndex[0];
+
+    const rows = await sheet.getRows(); // can pass in { limit, offset }
+
+    let i;
+    for (i=0; i < rows.length; i++) {
+        let feedname = rows[i]["_rawData"][0]
+        let feedid= rows[i]["_rawData"][1]
+        let endpoint = rows[i]["_rawData"][2]
+        let freq = rows[i]["_rawData"][3]
+        let decimals = rows[i]["_rawData"][4]
+        let parser = rows[i]["_rawData"][5]
+        let parsingargs = []
+
+        if (feedname === "Oracle Address" ) continue;
+        if (feedname === "Feed Name") continue;
+
+        try {
+            parsingargs = parser.split(",");
+        } catch {}
+
+        let tempInv = {
+            "feedName": feedname,
+            "feedId": feedid,
+            "endpoint": endpoint,
+            "frequency": freq,
+            "decimals": decimals,
+            "parsingargs": parsingargs
+        }
+
+        // process into global feed array
+        feedInventory.push(tempInv)
+    }
+
+    let names = []
+    let descriptions=[]
+    let decimals = []
+    let timeslots = []
+    let feedCosts = []
+    let revenueModes = []
+
+    let x;
+    for (x=0; x < feedInventory.length; x++ ) {
+        names.push(feedInventory[x]["feedName"])
+        descriptions.push("test")
+        decimals.push(feedInventory[x]["decimals"])
+        timeslots.push(feedInventory[x]["frequency"])
+        feedCosts.push(0)
+        revenueModes.push(0)
+    }
+
+    console.log("ok")
+    console.log(decimals)
+
+        try {
+        await oofContract.createNewFeeds(names,descriptions,decimals,timeslots,feedCosts,revenueModes)
+    } catch (e) {
+        console.log(e)
+    }
+}
+
 // starts the node script
+//setupFeeds()
 startNode()
 
