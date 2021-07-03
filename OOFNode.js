@@ -104,7 +104,7 @@ async function processFeeds(feedInput) {
     //start web 3 call
     console.log('submitting feeds...')
     try {
-        await oofContract.submitFeed(feedIdArray,feedValueArray)
+        let tx = await oofContract.submitFeed(feedIdArray,feedValueArray)
         console.log("submitted feed ids: " + feedIdArray + "with values: " + feedValueArray + " at " + Date.now())
     } catch (e) {
         console.log(e)
@@ -114,8 +114,8 @@ async function processFeeds(feedInput) {
 // start building inventory
 async function setupFeeds() {
     // Initialize the sheet
-    const doc = new GoogleSpreadsheet(sheetapi);
-    await doc.useApiKey(sheetid);
+    const doc = new GoogleSpreadsheet(sheetid);
+    await doc.useApiKey(sheetapi);
 
     await doc.loadInfo(); // loads document properties and worksheets
     const sheet = doc.sheetsByIndex[0];
@@ -130,6 +130,7 @@ async function setupFeeds() {
         let freq = rows[i]["_rawData"][3]
         let decimals = rows[i]["_rawData"][4]
         let parser = rows[i]["_rawData"][5]
+        let descriptions = rows[i]["_rawData"][6]
         let parsingargs = []
 
         if (feedname === "Oracle Address" ) continue;
@@ -145,7 +146,8 @@ async function setupFeeds() {
             "endpoint": endpoint,
             "frequency": freq,
             "decimals": decimals,
-            "parsingargs": parsingargs
+            "parsingargs": parsingargs,
+            "descriptions": descriptions
         }
 
         // process into global feed array
@@ -162,7 +164,7 @@ async function setupFeeds() {
     let x;
     for (x=0; x < feedInventory.length; x++ ) {
         names.push(feedInventory[x]["feedName"])
-        descriptions.push("test")
+        descriptions.push(feedInventory[x]["descriptions"])
         decimals.push(feedInventory[x]["decimals"])
         timeslots.push(feedInventory[x]["frequency"])
         feedCosts.push(0)
@@ -172,7 +174,13 @@ async function setupFeeds() {
     console.log("creating feeds...")
 
         try {
-        await oofContract.createNewFeeds(names,descriptions,decimals,timeslots,feedCosts,revenueModes)
+        let tx = await oofContract.createNewFeeds(names,descriptions,decimals,timeslots,feedCosts,revenueModes)
+            const {events, cumulativeGasUsed, gasUsed, transactionHash} = await tx.wait();
+            console.log(`Cumulative: ${cumulativeGasUsed.toNumber()}`);
+            console.log(`Gas: ${gasUsed.toNumber()}`)
+            console.log(`hash: ${transactionHash.toString()}`)
+
+
             console.log("feeds created")
     } catch (e) {
         console.log(e)
