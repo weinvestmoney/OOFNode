@@ -90,11 +90,11 @@ async function processFeeds(feedInput) {
                 toParse = toParse[feedInput[i]["parsingargs"][j]]
             }
             toParse = parseFloat(toParse) * (10 ** feedInput[i]["decimals"])
-            console.log(Math.round(toParse))
+            console.log(Math.round(toParse).toLocaleString('fullwide', {useGrouping:false}))
 
             // push values
             feedIdArray.push(feedInput[i]["feedId"])
-            feedValueArray.push(Math.round(toParse).toString())
+            feedValueArray.push(Math.round(toParse).toLocaleString('fullwide', {useGrouping:false}))
 
         } catch(e) {
             console.log(e)
