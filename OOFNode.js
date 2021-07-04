@@ -122,8 +122,18 @@ async function setupFeeds() {
 
     const rows = await sheet.getRows(); // can pass in { limit, offset }
 
+    console.log("Feeds in google sheet")
+    console.log(rows.length)
+
+    // get current feed len
+    let length = await oofContract.getFeedLength()
+    console.log("Found feeds in contract:")
+    console.log(length.toNumber())
+
     let i;
-    for (i=0; i < rows.length; i++) {
+
+    // start with 1 cause the first 2 lines are non related
+    for (i=1+length.toNumber() ; i < rows.length; i++) {
         let feedname = rows[i]["_rawData"][0]
         let feedid= rows[i]["_rawData"][1]
         let endpoint = rows[i]["_rawData"][2]
@@ -132,9 +142,6 @@ async function setupFeeds() {
         let parser = rows[i]["_rawData"][5]
         let descriptions = rows[i]["_rawData"][6]
         let parsingargs = []
-
-        if (feedname === "Oracle Address" ) continue;
-        if (feedname === "Feed Name") continue;
 
         try {
             parsingargs = parser.split(",");
@@ -171,10 +178,15 @@ async function setupFeeds() {
         revenueModes.push(0)
     }
 
-    console.log("creating feeds...")
+    if(feedInventory.length === 0)
+    {
+        console.log("no feeds to be created...")
+    }
+    else  {
+        console.log("creating feeds...")
 
         try {
-        let tx = await oofContract.createNewFeeds(names,descriptions,decimals,timeslots,feedCosts,revenueModes)
+            let tx = await oofContract.createNewFeeds(names,descriptions,decimals,timeslots,feedCosts,revenueModes)
             const {events, cumulativeGasUsed, gasUsed, transactionHash} = await tx.wait();
             console.log(`Cumulative: ${cumulativeGasUsed.toNumber()}`);
             console.log(`Gas: ${gasUsed.toNumber()}`)
@@ -182,9 +194,12 @@ async function setupFeeds() {
 
 
             console.log("feeds created")
-    } catch (e) {
-        console.log(e)
+        } catch (e) {
+            console.log(e)
+        }
     }
+
+
 }
 
 // starts the node script
