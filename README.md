@@ -24,7 +24,12 @@ Then cd into the dir and run
 
 `node OOFNode.js`
 
-and the node will automatically start submitting feeds every hour from the provided private key to the provided OOF address.
+The node will automatically start submitting feeds every hour from the provided private key to the provided OOF address.
+
+## Feeds Setup
+Feeds can be created and setup based on the linked spreadhsheet by simply running
+--setupFeeds
+which will then check and if needed create the feeds in the Oracle Feeds struct
 
 ## Disclaimer
 This program like any software might contain bugs. We are not responsible for any bugs or losses from it's use in any way if you choose to use the node or contracts.
