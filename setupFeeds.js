@@ -34,7 +34,7 @@ async function setupFeeds() {
     const rows = await sheet.getRows(); // can pass in { limit, offset }
 
     console.log("Feeds in google sheet")
-    console.log(rows.length)
+    console.log(rows.length-1)
 
     // get current feed len
     let length = await oofContract.getFeedLength()
