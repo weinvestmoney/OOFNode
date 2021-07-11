@@ -28,7 +28,7 @@ The node will automatically start submitting feeds every hour from the provided 
 
 ## Feeds Setup
 Feeds can be created and setup based on the linked spreadhsheet by simply running
---setupFeeds
+setupFeeds
 which will then check and if needed create the feeds in the Oracle Feeds struct
 
 ## Disclaimer
