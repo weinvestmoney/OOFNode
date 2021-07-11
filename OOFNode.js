@@ -45,8 +45,6 @@ async function startNode() {
 
         if (feedname === "Oracle Address" ) continue;
         if (feedname === "Feed Name") continue;
-        if (feedname === "CCMCAP/USD") continue;
-        if (feedname === "TVLDEFI/USD") continue;
 
         try {
             parsingargs = parser.split(",");
