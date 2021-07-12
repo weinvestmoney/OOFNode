@@ -19,7 +19,6 @@ SHEETID=ID / 1syqS8Gpl7ZS9UC_Wr6giY057XebJu3bZKXhIDsN-DJ0
 SHEETAPI=KEY
 
 
-
 Then cd into the dir and run
 
 `node OOFNode.js`
@@ -30,6 +29,9 @@ The node will automatically start submitting feeds every hour from the provided 
 Feeds can be created and setup based on the linked spreadhsheet by simply running
 setupFeeds
 which will then check and if needed create the feeds in the Oracle Feeds struct
+
+Sample Spreadsheet template to fork
+https://docs.google.com/spreadsheets/d/1syqS8Gpl7ZS9UC_Wr6giY057XebJu3bZKXhIDsN-DJ0
 
 ## Disclaimer
 This program like any software might contain bugs. We are not responsible for any bugs or losses from it's use in any way if you choose to use the node or contracts.
