@@ -84,7 +84,7 @@ async function processFeeds(feedInput) {
     for (i=0; i < feedInput.length;i++) {
 
         // only update when needed
-        if (lastUpdate[feedInput[i]["feedId"]] + parseInt(feedInput[i]["frequency"]) * 1000 <= Date.now() ) {
+        if (lastUpdate[feedInput[i]["feedId"]] + parseInt(feedInput[i]["frequency"]) * 1000 <= Date.now() + 600 * 1000) {
             try {
                 console.log(feedInput[i]["endpoint"])
                 const res = await fetch(feedInput[i]["endpoint"]);
