@@ -23,6 +23,9 @@ const oofContract =  !!ABI && !!walletWithProvider
 // store the feed inventory
 let feedInventory = [];
 
+// storage for last update timestamp
+let lastUpdate = {};
+
 // start building inventory
 async function startNode() {
     // Initialize the sheet
@@ -62,6 +65,7 @@ async function startNode() {
 
         // process into global feed array
         feedInventory.push(tempInv)
+        lastUpdate[feedid] = 0;
     }
 
     // process first time then every hour
@@ -78,26 +82,35 @@ async function processFeeds(feedInput) {
     console.log("checking feed APIs")
 
     for (i=0; i < feedInput.length;i++) {
-        try {
-            console.log(feedInput[i]["endpoint"])
-            const res = await fetch(feedInput[i]["endpoint"]);
-            const body = await res.json();
 
-            let j;
-            let toParse = body;
-            for (j=0; j < feedInput[i]["parsingargs"].length; j++) {
-                toParse = toParse[feedInput[i]["parsingargs"][j]]
+        // only update when needed
+        if (lastUpdate[feedInput[i]["feedId"]] + parseInt(feedInput[i]["frequency"]) * 1000 <= Date.now() ) {
+            try {
+                console.log(feedInput[i]["endpoint"])
+                const res = await fetch(feedInput[i]["endpoint"]);
+                const body = await res.json();
+
+                let j;
+                let toParse = body;
+                for (j=0; j < feedInput[i]["parsingargs"].length; j++) {
+                    toParse = toParse[feedInput[i]["parsingargs"][j]]
+                }
+                toParse = parseFloat(toParse) * (10 ** feedInput[i]["decimals"])
+                console.log(Math.round(toParse).toLocaleString('fullwide', {useGrouping:false}))
+
+                // push values
+                feedIdArray.push(feedInput[i]["feedId"])
+                feedValueArray.push(Math.round(toParse).toLocaleString('fullwide', {useGrouping:false}))
+
+                // set new update timestamp
+                lastUpdate[feedInput[i]["feedId"]] = Date.now()
+
+            } catch(e) {
+                console.log(e)
             }
-            toParse = parseFloat(toParse) * (10 ** feedInput[i]["decimals"])
-            console.log(Math.round(toParse).toLocaleString('fullwide', {useGrouping:false}))
-
-            // push values
-            feedIdArray.push(feedInput[i]["feedId"])
-            feedValueArray.push(Math.round(toParse).toLocaleString('fullwide', {useGrouping:false}))
-
-        } catch(e) {
-            console.log(e)
         }
+
+
     }
 
     //start web 3 call
