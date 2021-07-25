@@ -11,6 +11,7 @@ const pk= process.env.PK
 const oofAddress= process.env.OOFAddress
 const sheetapi= process.env.SHEETAPI
 const sheetid= process.env.SHEETID
+const sheettitle= process.env.SHEETTITLE
 
 const provider = new ethers.providers.JsonRpcProvider(rpc);
 const walletWithProvider = new ethers.Wallet(pk, provider);
@@ -29,7 +30,7 @@ async function setupFeeds() {
     await doc.useApiKey(sheetapi);
 
     await doc.loadInfo(); // loads document properties and worksheets
-    const sheet = doc.sheetsByIndex[0];
+    const sheet = doc.sheetsByTitle[sheettitle];
 
     const rows = await sheet.getRows(); // can pass in { limit, offset }
 
@@ -111,6 +112,8 @@ async function setupFeeds() {
     }
 }
 
-// sets up feeds
+
+
+//setupContract()
 setupFeeds()
 
