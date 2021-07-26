@@ -73,6 +73,13 @@ async function startNode() {
     setInterval(processFeeds, 3600 * 1000, feedInventory);
 }
 
+
+async function wait(ms) {
+    return new Promise(resolve => {
+        setTimeout(resolve, ms);
+    });
+}
+
 async function processFeeds(feedInput) {
 
     let feedIdArray = []
@@ -113,11 +120,33 @@ async function processFeeds(feedInput) {
 
     }
 
+    // get nonce
+    let nonce = await walletWithProvider.getTransactionCount();
+    let tx_obk = {
+        nonce: nonce
+    }
+
     //start web 3 call
     console.log('submitting feeds...')
     try {
-        let tx = await oofContract.submitFeed(feedIdArray,feedValueArray)
+        // submit trasaction first time
+        let tx = await oofContract.submitFeed(feedIdArray,feedValueArray, tx_obk)
         console.log("submitted feed ids: " + feedIdArray + "with values: " + feedValueArray + " at " + Date.now())
+        console.log("Transaction hash: " + tx.hash)
+
+        // check if still pending after 5 minutes
+        await wait(5 * 60 * 1000);
+        let txi = await provider.getTransaction(tx.hash)
+
+        if (txi.confirmations === 0) {
+            let tx = await oofContract.submitFeed(feedIdArray,feedValueArray, tx_obk)
+            console.log("resend transaction")
+            console.log("submitted feed ids: " + feedIdArray + "with values: " + feedValueArray + " at " + Date.now())
+        }
+        else {
+            console.log("Transaction hash: " + tx.hash + " was submitted successful")
+        }
+
     } catch (e) {
         console.log(e)
     }
