@@ -140,16 +140,20 @@ async function processFeeds(feedInput) {
         while (true) {
             await wait(5 * 60 * 1000);
             let txi = await provider.getTransaction(tx.hash)
-            let originalGasPrice = tx.gasPrice;
-
 
             if (txi.confirmations === 0) {
-                tx = await oofContract.submitFeed(feedIdArray,feedValueArray, tx_obk)
-                console.log("resend transaction")
-                console.log("submitted feed ids: " + feedIdArray + "with values: " + feedValueArray + " at " + Date.now())
+
+                try {
+                    tx = await oofContract.submitFeed(feedIdArray,feedValueArray, tx_obk)
+                    console.log("resend transaction")
+                    console.log("submitted feed ids: " + feedIdArray + "with values: " + feedValueArray + " at " + Date.now())
+                } catch (e) {
+                    console.log("Error while resending:")
+                    console.log(e)
+                }
             }
             else {
-                console.log("Transaction already minded!")
+                console.log("Transaction minded!")
                 break;
             }
         }
