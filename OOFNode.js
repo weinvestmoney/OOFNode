@@ -137,7 +137,7 @@ async function processFeeds(feedInput) {
         console.log("Transaction hash: " + tx.hash)
 
         // check if still pending after 5 minutes
-        while (true) {
+        while (false) {
             await wait(3 * 60 * 1000);
             let txi = await provider.getTransaction(tx.hash)
 
@@ -147,11 +147,12 @@ async function processFeeds(feedInput) {
                 console.log("submitted feed ids: " + feedIdArray + "with values: " + feedValueArray + " at " + Date.now())
             }
             else {
-                console.log("Transaction hash: " + tx.hash + " was submitted successful")
+
                 break;
             }
         }
 
+        console.log("Transaction hash: " + tx.hash + " was submitted successful")
 
     } catch (e) {
         console.log(e)
