@@ -137,17 +137,29 @@ async function processFeeds(feedInput) {
         console.log("Transaction hash: " + tx.hash)
 
         // check if still pending after 5 minutes
-        while (false) {
+        while (true) {
             await wait(3 * 60 * 1000);
             let txi = await provider.getTransaction(tx.hash)
+            let originalGasPrice = tx.gasPrice;
+
+            console.log(tx)
+            console.log(originalGasPrice)
+
+            let tx_obj_new = {
+                nonce: nonce,
+                gasLimit: 2000000,
+                gasPrice: originalGasPrice.mul(120).div(100)
+            }
+
+            console.log(tx_obj_new)
 
             if (txi.confirmations === 0) {
-                tx = await oofContract.submitFeed(feedIdArray,feedValueArray, tx_obk)
+                tx = await oofContract.submitFeed(feedIdArray,feedValueArray, tx_obj_new)
                 console.log("resend transaction")
                 console.log("submitted feed ids: " + feedIdArray + "with values: " + feedValueArray + " at " + Date.now())
             }
             else {
-
+                console.log("Transaction already minded!")
                 break;
             }
         }
