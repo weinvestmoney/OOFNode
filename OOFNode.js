@@ -131,7 +131,7 @@ async function processFeeds(feedInput) {
     console.log('submitting feeds...')
     let tx;
     try {
-        // submit trasaction first time
+        // submit transaction first time
         tx = await oofContract.submitFeed(feedIdArray,feedValueArray, tx_obk)
         console.log("submitted feed ids: " + feedIdArray + "with values: " + feedValueArray + " at " + Date.now())
         console.log("Transaction hash: " + tx.hash)
@@ -153,12 +153,12 @@ async function processFeeds(feedInput) {
                 }
             }
             else {
-                console.log("Transaction minded!")
+                console.log("Transaction mined!")
                 break;
             }
         }
 
-        console.log("Transaction hash: " + tx.hash + " was submitted successful")
+        console.log("Transaction hash: " + tx.hash + " was mined successful")
 
     } catch (e) {
         console.log(e)
