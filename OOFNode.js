@@ -122,12 +122,15 @@ async function processFeeds(feedInput) {
 
     // get nonce
     let nonce = await walletWithProvider.getTransactionCount();
+    let gasPrice = await provider.getGasPrice()
     let tx_obk = {
         nonce: nonce,
-        gasLimit: 2000000
+        gasLimit: 2000000,
+        gasPrice: gasPrice
     }
 
     //start web 3 call
+    console.log("submitting with gas price: " + ethers.utils.formatUnits(gasPrice, "gwei") + " gwei")
     console.log('submitting feeds...')
     let tx;
     try {
@@ -141,15 +144,36 @@ async function processFeeds(feedInput) {
             await wait(5 * 60 * 1000);
             let txi = await provider.getTransaction(tx.hash)
 
+            console.log("Checking tx after 5 minutes at " + Date.now())
+
+            // if the tx is not confirmed
             if (txi.confirmations === 0) {
+                let newGasPrice = await provider.getGasPrice()
+                console.log("Current gas price: " + ethers.utils.formatUnits(newGasPrice, "gwei") + " gwei")
+
+                // check if new gas price smaller than old one
+                if (newGasPrice.lte(gasPrice)) {
+                    console.log("Old gas price higher than current increasing new one")
+                    newGasPrice = gasPrice.add(ethers.utils.parseUnits("1", "gwei"))
+                }
+
+                let tx_obi = {
+                    nonce: nonce,
+                    gasLimit: 2000000,
+                    gasPrice: newGasPrice
+                }
+
+                gasPrice = newGasPrice;
 
                 try {
-                    tx = await oofContract.submitFeed(feedIdArray,feedValueArray, tx_obk)
+                    tx = await oofContract.submitFeed(feedIdArray,feedValueArray, tx_obi)
                     console.log("resend transaction")
+                    console.log("Resending with gas price: " + ethers.utils.formatUnits(newGasPrice, "gwei") + " gwei")
                     console.log("submitted feed ids: " + feedIdArray + "with values: " + feedValueArray + " at " + Date.now())
                 } catch (e) {
                     console.log("Error while resending:")
                     console.log(e)
+                    break;
                 }
             }
             else {
@@ -158,7 +182,7 @@ async function processFeeds(feedInput) {
             }
         }
 
-        console.log("Transaction hash: " + tx.hash + " was mined successful")
+        console.log("Transaction loop for tx: " + tx.hash + " exited")
 
     } catch (e) {
         console.log(e)
