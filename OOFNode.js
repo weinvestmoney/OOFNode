@@ -171,6 +171,14 @@ async function processFeeds(feedInput) {
                     gasPrice: newGasPrice
                 }
 
+                if (sheettitle === "Polygon") {
+                    tx_obi = {
+                        nonce: nonce,
+                        gasLimit: 10000000,
+                        gasPrice: newGasPrice
+                    }
+                }
+
                 gasPrice = newGasPrice;
 
                 try {
