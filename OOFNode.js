@@ -129,6 +129,14 @@ async function processFeeds(feedInput) {
         gasPrice: gasPrice
     }
 
+    if (sheettitle === "Polygon") {
+        tx_obk = {
+            nonce: nonce,
+            gasLimit: 10000000,
+            gasPrice: gasPrice
+        }
+    }
+
     //start web 3 call
     console.log("submitting with gas price: " + ethers.utils.formatUnits(gasPrice, "gwei") + " gwei")
     console.log('submitting feeds...')
