@@ -3,7 +3,7 @@ const fetch = require("node-fetch");
 const ethers = require('ethers');
 require('dotenv').config()
 const ABI = require('./abi/oof.json')
-const {Contract} = require("ethers");
+const {Contract, BigNumber} = require("ethers");
 
 // config go to file later
 const rpc = process.env.RPC
@@ -12,6 +12,9 @@ const oofAddress= process.env.OOFAddress
 const sheetapi= process.env.SHEETAPI
 const sheetid= process.env.SHEETID
 const sheettitle= process.env.SHEETTITLE
+
+// 100 gwei
+const GAS_PRICE_MAX = BigNumber.from("100000000000");
 
 const provider = new ethers.providers.JsonRpcProvider(rpc);
 const walletWithProvider = new ethers.Wallet(pk, provider);
@@ -123,6 +126,11 @@ async function processFeeds(feedInput) {
     // get nonce
     let nonce = await walletWithProvider.getTransactionCount();
     let gasPrice = await provider.getGasPrice()
+
+    if (gasPrice.gt(GAS_PRICE_MAX)) {
+        gasPrice = GAS_PRICE_MAX
+    }
+
     let tx_obk = {
         nonce: nonce,
         gasLimit: 2000000,
@@ -180,6 +188,10 @@ async function processFeeds(feedInput) {
                 }
 
                 gasPrice = newGasPrice;
+                
+                if (gasPrice.gt(GAS_PRICE_MAX)) {
+                    gasPrice = GAS_PRICE_MAX
+                }
 
                 try {
                     tx = await oofContract.submitFeed(feedIdArray,feedValueArray, tx_obi)
